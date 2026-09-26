@@ -1,4 +1,4 @@
-FROM php:8.2.34-alpine
+FROM php:8.3.35-alpine3.23
 RUN apk add --no-cache libpng-dev libzip-dev oniguruma-dev libxml2-dev \
     && docker-php-ext-install pdo_mysql zip gd
 COPY laravel/ /var/www/html/
