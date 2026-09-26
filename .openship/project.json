@@ -1,6 +1,6 @@
 {
   "name": "digital-hub-app",
-  "framework": "laravel",
+  "framework": "docker",
   "workloadType": "web",
   "sourceKind": "git",
   "buildKind": "dockerfile",
