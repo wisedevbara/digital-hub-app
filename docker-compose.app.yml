@@ -9,6 +9,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - ./laravel:/var/www/html 
     container_name: laravel_app
     restart: unless-stopped
     depends_on:
@@ -61,7 +63,8 @@ services:
     ports:
       - "${NGINX_PORT}:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./laravel:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf   # ✅ BENAR
 
 volumes:
   postgres_app_data:
