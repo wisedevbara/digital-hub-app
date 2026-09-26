@@ -1,6 +1,7 @@
 FROM php:8.5-fpm-alpine
 
-WORKDIR /var/www/html
+RUN mkdir -p /workspace
+WORKDIR  /workspace
 
 # Instal library runtime yang dibutuhkan ekstensi PHP
 RUN apk add --no-cache \
@@ -30,6 +31,7 @@ RUN apk add --no-cache --virtual .build-deps \
         bcmath \
     && apk del .build-deps
 
+COPY . /var/www/html
 COPY laravel/ /var/www/html/
 
 RUN chown -R www-data:www-data /var/www/html \
