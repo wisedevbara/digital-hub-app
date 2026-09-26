@@ -2,7 +2,7 @@ FROM php:8.5-fpm-alpine
 
 WORKDIR /var/www/html
 
-# Instal dependensi sistem & ekstensi PHP yang dibutuhkan Laravel + PostgreSQL
+# Instal library runtime yang dibutuhkan ekstensi PHP
 RUN apk add --no-cache \
     postgresql-libs \
     libzip-dev \
@@ -10,24 +10,28 @@ RUN apk add --no-cache \
     oniguruma-dev \
     libpng-dev \
     libxml2-dev \
-    && apk add --no-cache --virtual .build-deps \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev
+
+# Instal build dependencies dan compile ekstensi
+# CATATAN: opcache TIDAK diinstal terpisah karena sudah built-in di PHP 8.5
+RUN apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
     postgresql-dev \
-    && docker-php-ext-install \
-    pdo \
-    pdo_pgsql \
-    zip \
-    intl \
-    mbstring \
-    gd \
-    bcmath \
-    opcache \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) \
+        pdo \
+        pdo_pgsql \
+        zip \
+        intl \
+        mbstring \
+        gd \
+        bcmath \
     && apk del .build-deps
 
-# Copy seluruh project Laravel dari folder lokal 'laravel/' ke dalam container
 COPY laravel/ /var/www/html/
 
-# Atur permission untuk storage dan bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
