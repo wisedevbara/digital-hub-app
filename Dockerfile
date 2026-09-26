@@ -1,8 +1,37 @@
-FROM php:8.3.35-alpine3.23
-RUN apk add --no-cache libpng-dev libzip-dev oniguruma-dev libxml2-dev \
-    && docker-php-ext-install pdo_mysql zip gd
-COPY laravel/ /var/www/html/
+FROM php:8.3-fpm-alpine
+
 WORKDIR /var/www/html
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --no-dev --optimize-autoloader --prefer-dist || true
-CMD ["php", "-S", "0.0.0.0:9000", "-t", "/var/www/html/public"]
+
+# Instal dependensi sistem & ekstensi PHP yang dibutuhkan Laravel + PostgreSQL
+RUN apk add --no-cache \
+    postgresql-libs \
+    libzip-dev \
+    icu-dev \
+    oniguruma-dev \
+    libpng-dev \
+    libxml2-dev \
+    && apk add --no-cache --virtual .build-deps \
+    $PHPIZE_DEPS \
+    postgresql-dev \
+    && docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    zip \
+    intl \
+    mbstring \
+    gd \
+    bcmath \
+    opcache \
+    && apk del .build-deps
+
+# Copy seluruh project Laravel dari folder lokal 'laravel/' ke dalam container
+COPY laravel/ /var/www/html/
+
+# Atur permission untuk storage dan bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
+
+EXPOSE 9000
+
+CMD ["php-fpm"]
