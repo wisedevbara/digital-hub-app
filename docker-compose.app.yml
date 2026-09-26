@@ -64,7 +64,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
 
   php:
-    image: php:8.2.34-alpine
+    image: php:8.3.35-alpine3.23
     container_name: php_app
     restart: unless-stopped
     networks:
