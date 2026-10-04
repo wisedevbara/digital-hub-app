@@ -35,4 +35,18 @@ return [
         ],
     ],
 
+    'authentik' => [
+        // URL the BROWSER uses to reach Authentik (redirect, consent, logout).
+        'issuer' => env('AUTHENTIK_ISSUER', 'http://localhost:9001/application/o/digital-hub/'),
+        // URL THIS SERVER uses to reach Authentik over the docker network.
+        // Never use localhost here: inside a container that is the container itself.
+        'internal_issuer' => env('AUTHENTIK_INTERNAL_ISSUER', 'http://server:9000/application/o/digital-hub/'),
+        'client_id' => env('AUTHENTIK_CLIENT_ID', ''),
+        'client_secret' => env('AUTHENTIK_CLIENT_SECRET', ''),
+        // Must match a Redirect URI registered on the Authentik provider,
+        // and must be reachable from the browser, so keep the host-facing URL.
+        'redirect_uri' => env('AUTHENTIK_REDIRECT_URI', 'http://localhost:9000/auth/callback'),
+        'scope' => env('AUTHENTIK_SCOPE', 'openid email profile'),
+    ],
+
 ];

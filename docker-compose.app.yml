@@ -1,8 +1,7 @@
-version: "3.9"
-
 networks:
   digital-hub-net:
-    external: false
+    name: digital-hub-net
+    external: true
 
 services:
   laravel:
@@ -28,7 +27,10 @@ services:
     container_name: postgres_app
     restart: unless-stopped
     networks:
-      - digital-hub-net
+      digital-hub-net:
+        aliases:
+          - postgres-app
+          - postgres
     env_file:
       - .env
     environment:
@@ -45,7 +47,10 @@ services:
     container_name: redis_app
     restart: unless-stopped
     networks:
-      - digital-hub-net
+      digital-hub-net:
+        aliases:
+          - redis-app
+          - redis
     env_file:
       - .env
     ports:
