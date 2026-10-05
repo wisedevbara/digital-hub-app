@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        // Stable identifier from the IdP (the OIDC `sub` claim).
+        'oidc_sub',
     ];
 
     /**
