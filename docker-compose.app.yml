@@ -13,8 +13,8 @@ services:
     container_name: laravel_app
     restart: unless-stopped
     depends_on:
-      - postgres
-      - redis
+      - postgres-app
+      - redis-app
     networks:
       - digital-hub-net
     env_file:
@@ -22,7 +22,11 @@ services:
     ports:
       - "9000:9000"
 
-  postgres:
+  # Service name is deliberately unique across stacks. Both compose files share
+  # the external network digital-hub-net, and Docker turns the service name into
+  # a network alias automatically - two services both named "postgres" made
+  # that name resolve round-robin to either stack.
+  postgres-app:
     image: postgres:16-alpine
     container_name: postgres_app
     restart: unless-stopped
@@ -30,7 +34,6 @@ services:
       digital-hub-net:
         aliases:
           - postgres-app
-          - postgres
     env_file:
       - .env
     environment:
@@ -42,7 +45,7 @@ services:
     volumes:
       - postgres_app_data:/var/lib/postgresql/data
 
-  redis:
+  redis-app:
     image: redis:8.2
     container_name: redis_app
     restart: unless-stopped
@@ -50,7 +53,6 @@ services:
       digital-hub-net:
         aliases:
           - redis-app
-          - redis
     env_file:
       - .env
     ports:
